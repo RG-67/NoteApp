@@ -87,9 +87,9 @@ function Login() {
                 <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
             <View style={styles.signUpContainer}>
-            <Text style={styles.subHeaderTextStyle}>Don't have account?</Text>
-            <TouchableOpacity>
-            <Text style={styles.signUp}>Sign up</Text>
+            <Text style={styles.signUpText}>Don't have account?</Text>
+            <TouchableOpacity style={{alignContent: 'center'}}>
+            <Text style={styles.signUpBtn}>Sign up</Text>
             </TouchableOpacity>
             </View>
         </View>
@@ -173,19 +173,30 @@ const styles = StyleSheet.create({
         justifyContent: 'center', 
         alignItems: 'center'
     },
-    signUp: {
-        color: Colors.colorOnPrimary, 
-        fontFamily: 'sans-serif', 
-        fontWeight: 'bold', 
-        marginStart: 5, 
-        fontSize: 15, 
-        textDecorationLine: 'underline'
-    },
     signUpContainer: {
         flexDirection: 'row', 
         marginHorizontal: 40, 
         justifyContent: 'center', 
         marginTop: 20
+    },
+    signUpBtn: {
+        color: Colors.colorOnPrimary, 
+        fontFamily: 'sans-serif', 
+        fontWeight: 'bold', 
+        marginStart: 5, 
+        fontSize: 14, 
+        textDecorationLine: 'underline',
+        verticalAlign: 'auto'
+    },
+    signUpText: {
+        color: Colors.grey,
+        fontFamily: 'sans-sarif',
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 20,
+        fontSize: 14,
+        alignSelf: 'center',
+        verticalAlign: 'auto'
     }
 })
 
