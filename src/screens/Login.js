@@ -91,7 +91,7 @@ function Login() {
             </TouchableOpacity>
             <View style={styles.signUpContainer}>
             <Text style={styles.signUpText}>Don't have account?</Text>
-            <TouchableOpacity style={{alignContent: 'center'}} onPress={() => navigation.navigate('Registration')}>
+            <TouchableOpacity style={styles.signUpTouch} onPress={() => navigation.navigate('Registration')}>
             <Text style={styles.signUpBtn}>Sign up</Text>
             </TouchableOpacity>
             </View>
@@ -200,6 +200,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         alignSelf: 'center',
         verticalAlign: 'auto'
+    },
+    signUpTouch: {
+        alignContent: 'center'
     }
 })
 

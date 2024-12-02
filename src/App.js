@@ -35,7 +35,7 @@ function App() {
   return (
     <NavigationContainer>
       <StatusBar backgroundColor={Colors.colorPrimaryVariant} barStyle="light-content"/>
-      <Stack.Navigator initialRouteName='Registration'/* 'Login' */>
+      <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
         <Stack.Screen name='Registration' component={Registration} options={{headerShown: false}}/>
       </Stack.Navigator>
