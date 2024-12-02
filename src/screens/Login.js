@@ -4,15 +4,16 @@ import { LoginRegisterGradient, LoginRegTextInputGradient } from "../styles/Grad
 import CheckBox from "../components/CheckBox";
 import { useState } from "react";
 import { loginApi } from "../api/userApi";
-
-
-
+import { useNavigation } from "@react-navigation/native";
 
 
 function Login() {
+    const navigation = useNavigation();
+
     const [remember, setRemember] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isPassVisible, setPassVisible] = useState(false);
 
     const handleUser = () => {
         if(!email) {
@@ -65,12 +66,14 @@ function Login() {
                     <Image source={require('../assets/images/password.png')} style={styles.iconStyle}/>
                 <TextInput 
                 placeholder="Password"  
-                // secureTextEntry={true} 
+                secureTextEntry={!isPassVisible}
                 style={styles.textInputStyle}
                 value={password}
                 onChangeText={setPassword}/>
-                <TouchableOpacity>
-                    <Image source={require('../assets/images/open_eye.png')} style={styles.passImageStyle}/>
+                <TouchableOpacity onPress={() => setPassVisible(!isPassVisible)}>
+                    <Image 
+                    source={isPassVisible ? require('../assets/images/open_eye.png') : require('../assets/images/close_eye.png')}
+                    style={styles.passImageStyle}/>
                 </TouchableOpacity>
                 </View>
             </LoginRegTextInputGradient>
@@ -88,7 +91,7 @@ function Login() {
             </TouchableOpacity>
             <View style={styles.signUpContainer}>
             <Text style={styles.signUpText}>Don't have account?</Text>
-            <TouchableOpacity style={{alignContent: 'center'}}>
+            <TouchableOpacity style={{alignContent: 'center'}} onPress={() => navigation.navigate('Registration')}>
             <Text style={styles.signUpBtn}>Sign up</Text>
             </TouchableOpacity>
             </View>

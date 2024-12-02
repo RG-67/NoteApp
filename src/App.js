@@ -25,6 +25,7 @@ import { createNote, deleteNote, getAllNotes } from './api/noteApi';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from './screens/Login';
+import Registration from './screens/Registration';
 import Colors from './styles/colors';
 
 function App() {
@@ -34,8 +35,9 @@ function App() {
   return (
     <NavigationContainer>
       <StatusBar backgroundColor={Colors.colorPrimaryVariant} barStyle="light-content"/>
-      <Stack.Navigator initialRouteName='Login'>
+      <Stack.Navigator initialRouteName='Registration'/* 'Login' */>
         <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
+        <Stack.Screen name='Registration' component={Registration} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   )
