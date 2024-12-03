@@ -6,7 +6,7 @@ const Colors = {
     light_green: "#D1EDB2",
     sallow_green: "#758E5A",
     icon_color: "#37D07B",
-    black: "#FF000000",
+    black: "#000000",
     white: "#FFFFFFFF",
     grey: "#AAA8A8",
     deep_grey: "#817F7F",

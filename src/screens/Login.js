@@ -86,7 +86,7 @@ function Login() {
                     <Text style={styles.forgotPass}>Forgot Password ?</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.loginBtn} onPress={handleUser}>
+            <TouchableOpacity style={styles.loginBtn} /* onPress={handleUser} */ onPress={() => navigation.navigate('Home')}>
                 <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
             <View style={styles.signUpContainer}>
