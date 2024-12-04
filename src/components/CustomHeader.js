@@ -1,15 +1,31 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../styles/colors";
+import { useRoute } from "@react-navigation/native";
+
+const  CustomHeader = ({navigation}) => {
+    const route = useRoute();
+
+    const getHeader = () => {
+        switch (route.name) {
+            case 'Note':
+                return 'Note';
+                break;
+            case 'Reminder':
+                return 'Reminder';
+                break;
+            default:
+                return 'Header';
+                break;
+        }
+    }
 
 
-
-const  CustomHeader = (navigation) => {
     return (
         <View style={styles.mainContainer}>
-            <TouchableOpacity onPress={() => navigation.toogleDrawer()} style={styles.menuHeader}>
+            <TouchableOpacity onPress={() => navigation.toggleDrawer()} style={styles.menuHeader}>
                 <Text style={styles.menuStyle}>☰</Text>
             </TouchableOpacity>
-            <Text style={styles.headerStyle}>Header</Text>
+            <Text style={styles.headerStyle}>{getHeader()}</Text>
         </View>
     )
 }
@@ -36,7 +52,6 @@ const styles = StyleSheet.create({
         textAlign: 'center'
     },
     menuHeader: {
-        width: 40, 
         justifyContent: 'center', 
         alignItems: 'center'
     }

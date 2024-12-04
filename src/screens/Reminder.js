@@ -1,12 +1,13 @@
 import { StyleSheet, View } from "react-native";
 import Colors from "../styles/colors";
+import CustomHeader from "../components/CustomHeader";
 
 
 
-function Reminder() {
+function Reminder({navigation}) {
     return (
         <View style={styles.mainContainer}>
-
+            <CustomHeader navigation={navigation}/>
         </View>
     )
 }

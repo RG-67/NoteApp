@@ -1,29 +1,32 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../styles/colors";
 
-const CustomDrawerContent = () => {
+const CustomDrawerContent = ({navigation, state}) => {
+    const activeRouteName = state.routes[state.index].name;
+
+
     return (
         <View>
             <Image source={require('../assets/images/avatar.png')} style={styles.imageStyle}/>
             <Text style={styles.title}>Notes App</Text>
             <Text style={styles.userName}>Notes App</Text>
             <View style={styles.firstLineStyle}/>
-            <View style={styles.subHeaderContainer}>
+            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Note' && styles.activeDrawerStyle]} onPress={() => navigation.navigate('Note')}>
                 <Image source={require('../assets/images/note.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Note</Text>
-            </View>
-            <View style={styles.subHeaderContainer}>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Reminder' && styles.activeDrawerStyle]} onPress={() => navigation.navigate('Reminder')}>
                 <Image source={require('../assets/images/reminder.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Reminder</Text>
-            </View>
-            <View style={styles.subHeaderContainer}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.subHeaderContainer}>
                 <Image source={require('../assets/images/bin.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Bin</Text>
-            </View>
-            <View style={styles.subHeaderContainer}>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.subHeaderContainer}>
                 <Image source={require('../assets/images/log_out.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Log Out</Text>
-            </View>
+            </TouchableOpacity>
         </View>
     )
 }
@@ -63,7 +66,8 @@ const styles = StyleSheet.create({
     subHeaderContainer: {
         flexDirection: 'row', 
         marginVertical: 10, 
-        marginHorizontal: 20
+        marginHorizontal: 20,
+        padding: 10
     },
     iconStyle: {
         height: 20, 
@@ -76,6 +80,10 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.deep_grey, 
         marginTop: 10, 
         marginBottom: 10
+    },
+    activeDrawerStyle: {
+        backgroundColor: Colors.transparent_green,
+        elevation: 2
     }
 })
 
