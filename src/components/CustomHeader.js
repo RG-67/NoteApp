@@ -13,6 +13,9 @@ const  CustomHeader = ({navigation}) => {
             case 'Reminder':
                 return 'Reminder';
                 break;
+            case 'Bin':
+                return 'Bin';
+                break;
             default:
                 return 'Header';
                 break;

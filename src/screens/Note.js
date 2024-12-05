@@ -23,7 +23,7 @@ function Note ({navigation}) {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        color: Colors.colorOnPrimary
+        color: Colors.white
     },
     searchContainer: {
         height: 45,

@@ -33,18 +33,23 @@ import Note from './screens/Note';
 import Reminder from './screens/Reminder';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomDrawerContent from './components/CustomDrawerContent';
+import { enableScreens } from 'react-native-screens';
+import Bin from './screens/Bin';
 
 function App() {
+
+  enableScreens();
 
   const Stack = createNativeStackNavigator();
   const Drawer = createDrawerNavigator();
 
   const DrawerNavigator = () => {
     return (
-      <Drawer.Navigator initialRouteName='Note' screenOptions={{headerShown: false}}
+      <Drawer.Navigator initialRouteName='Note' screenOptions={{headerShown: false, drawerType: 'front', overlayColor: 'transparent', swipeEdgeWidth: 50}}
       drawerContent={(props) => <CustomDrawerContent {...props}/>}>
       <Drawer.Screen name='Note' component={Note}/>
       <Drawer.Screen name='Reminder' component={Reminder}/>
+      <Drawer.Screen name='Bin' component={Bin}/>
       </Drawer.Navigator>
     )
   }

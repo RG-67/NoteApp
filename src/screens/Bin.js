@@ -1,10 +1,10 @@
 import { StyleSheet, View } from "react-native";
-import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
+import Colors from "../styles/colors";
 
 
 
-function Reminder({navigation}) {
+const Bin = ({navigation}) => {
     return (
         <View style={styles.mainContainer}>
             <CustomHeader navigation={navigation}/>
@@ -18,8 +18,8 @@ const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
         color: Colors.white
-    }
+    },
 })
 
 
-export default Reminder;
+export default Bin;

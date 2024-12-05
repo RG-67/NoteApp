@@ -19,7 +19,7 @@ const CustomDrawerContent = ({navigation, state}) => {
                 <Image source={require('../assets/images/reminder.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Reminder</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.subHeaderContainer}>
+            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Bin' && styles.activeDrawerStyle]} onPress={() => navigation.navigate('Bin')}>
                 <Image source={require('../assets/images/bin.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Bin</Text>
             </TouchableOpacity>
