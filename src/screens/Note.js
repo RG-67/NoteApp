@@ -1,39 +1,61 @@
-import { Dimensions, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, Dimensions, FlatList, LayoutAnimation, Platform, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from "react-native";
 import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { noteItems } from "../utility/TestNoteData";
+import { useState } from "react";
 
 
 const itemWidth = Dimensions.get('window').width;
 
 function Note ({navigation}) {
+
+    const [isVisible, setVisible] = useState(true);
+
+    if(Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+        UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+
+    const toggleViews = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setVisible(!isVisible);
+    }
+
     return (
         <View style={styles.mainContainer}>
             <CustomHeader navigation={navigation}/>
-            <View style={styles.searchContainer}>
-            <TextInput style={styles.searchTextStyle} multiline={false} placeholder="Search here.." placeholderTextColor={Colors.grey} keyboardType='default'/>
-            <Icon name="search" size={30} color={Colors.colorPrimaryVariant} style={{marginEnd: 10}}/>
-            </View>
-            <FlatList
-            data={noteItems}
-            keyExtractor={(item) => item.id}
-            numColumns={2}
-            columnWrapperStyle={styles.wrapperStyle}
-            renderItem={({item}) => (
-            <View style={styles.mainItemContainer}>
-            <Text style={styles.dateAndTimeStyle}>{item.date}</Text>
-            <Text style={styles.dateAndTimeStyle}>{item.time}</Text>
-            <View style={styles.noteContainer}>
-                <Text style={styles.noteTitleStyle}>{item.title}</Text>
-                <Text style={styles.noteTextStyle}>{item.note}</Text>
-            </View>
-            </View>
-        )}
-            style={styles.noteItemContainer}/>
-            <TouchableOpacity style={styles.floatBtnStyle}>
-                <Icon name="add" size={30} color={Colors.white}/>
-            </TouchableOpacity>
+            {isVisible ? (
+                <View style={{flex: 1}}>
+                <View style={styles.searchContainer}>
+                <TextInput style={styles.searchTextStyle} multiline={false} placeholder="Search here.." placeholderTextColor={Colors.grey} keyboardType='default'/>
+                <Icon name="search" size={30} color={Colors.colorPrimaryVariant} style={{marginEnd: 10}}/>
+                </View>
+                <FlatList
+                data={noteItems}
+                keyExtractor={(item) => item.id}
+                numColumns={2}
+                columnWrapperStyle={styles.wrapperStyle}
+                renderItem={({item}) => (
+                <View style={styles.mainItemContainer}>
+                <Text style={styles.dateAndTimeStyle}>{item.date}</Text>
+                <Text style={styles.dateAndTimeStyle}>{item.time}</Text>
+                <View style={styles.noteContainer}>
+                    <Text style={styles.noteTitleStyle}>{item.title}</Text>
+                    <Text style={styles.noteTextStyle}>{item.note}</Text>
+                </View>
+                </View>
+            )}
+                style={styles.noteItemContainer}/>
+                <TouchableOpacity style={styles.floatBtnStyle} onPress={toggleViews}>
+                    <Icon name="add" size={30} color={Colors.white}/>
+                </TouchableOpacity>
+                </View>
+            ) : (
+                <View style={{backgroundColor: Colors.black, flex: 1}}>
+                    <Button title="Toggle" onPress={toggleViews}/>
+                </View>
+            )}
+            
         </View>
     )
 }
