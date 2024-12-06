@@ -1,4 +1,4 @@
-import { Button, Dimensions, FlatList, LayoutAnimation, Platform, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from "react-native";
+import { Button, Dimensions, FlatList, LayoutAnimation, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from "react-native";
 import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -51,8 +51,31 @@ function Note ({navigation}) {
                 </TouchableOpacity>
                 </View>
             ) : (
-                <View style={{backgroundColor: Colors.black, flex: 1}}>
-                    <Button title="Toggle" onPress={toggleViews}/>
+                <View style={styles.createMainNoteContainer}>
+                    <TextInput style={styles.titleStyle} 
+                    placeholder="Title" 
+                    placeholderTextColor={Colors.grey} 
+                    keyboardType="default" 
+                    multiline={false}
+                    underlineColorAndroid={Colors.black}/>
+                    <ScrollView style={styles.noteScroll}>
+                    <TextInput style={styles.noteStyle} 
+                    placeholder="Type here.." 
+                    placeholderTextColor={Colors.grey} 
+                    keyboardType="default" 
+                    multiline={true}/>
+                    </ScrollView>
+                    <View style={styles.noteButtonContainer}>
+                        <TouchableOpacity style={styles.cancelBtnStyle} onPress={toggleViews}>
+                            <Icon name="cancel" size={30} color={Colors.transparent_green} style={styles.noteCreateBtnStyle}/>
+                            <Text style={styles.noteCreateTextStyle}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.saveBtnStyle} onPress={toggleViews}>
+                            <Icon name="save" size={30} color={Colors.transparent_green} style={styles.noteCreateBtnStyle}/>
+                            <Text style={styles.noteCreateTextStyle}>Save</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/* <Button title="Toggle" onPress={toggleViews}/> */}
                 </View>
             )}
             
@@ -65,7 +88,7 @@ function Note ({navigation}) {
 const styles = StyleSheet.create({
     mainContainer: {
         flex: 1,
-        color: Colors.white
+        color: Colors.light_green
     },
     searchContainer: {
         height: 45,
@@ -149,6 +172,62 @@ const styles = StyleSheet.create({
         color: Colors.black,
         fontSize: 13,
         fontFamily: 'sans-serif'
+    },
+    createMainNoteContainer: {
+        flex: 1,
+        backgroundColor: Colors.white, 
+    },
+    titleStyle: {
+        fontWeight: 'bold',
+        fontSize: 18,
+        color: Colors.black,
+        fontFamily: 'sans-serif',
+        marginHorizontal: 10,
+        marginTop: 10,
+        height: 50,
+        paddingHorizontal: 10
+    },
+    noteStyle: {
+        fontWeight: 'normal',
+        fontSize: 15,
+        color: Colors.white,
+        fontFamily: 'sans-serif',
+        height: 'auto'
+    },
+    noteScroll: {
+        marginHorizontal: 10, 
+        marginBottom: 20
+    },
+    noteButtonContainer: {
+        flexDirection: 'row',
+        height: 55,
+        bottom: 10,
+        marginHorizontal: 10
+    },
+    cancelBtnStyle: {
+        flex: 1,
+        right: 5,
+        backgroundColor: Colors.sallow_green,
+        flexDirection: 'row'
+    },
+    saveBtnStyle: {
+        flex: 1,
+        left: 5,
+        backgroundColor: Colors.colorOnPrimary,
+        flexDirection: 'row'
+    },
+    noteCreateBtnStyle: {
+        alignSelf: 'center',
+        marginStart: 10
+    },
+    noteCreateTextStyle: {
+        fontFamily:'sans-serif',
+        color: Colors.transparent_green,
+        fontSize: 18,
+        fontWeight: 'bold',
+        alignSelf: 'center',
+        textAlign: 'center',
+        left: 30
     }
 })
 
