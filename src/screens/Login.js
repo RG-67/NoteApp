@@ -38,7 +38,6 @@ function Login() {
                 setPassword("");
                 await setCredentials(response?.data._id, response?.data.userId);
                 navigation.navigate('Home');
-                // Alert.alert("Success", response?.msg);
             } else {
                 Alert.alert("Error", response?.msg || "Invalid user id or password");
             }
