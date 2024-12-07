@@ -42,7 +42,7 @@ function App() {
 
   const Stack = createNativeStackNavigator();
   const Drawer = createDrawerNavigator();
-
+  
   const DrawerNavigator = () => {
     return (
       <Drawer.Navigator initialRouteName='Note' screenOptions={{headerShown: false, drawerType: 'front', overlayColor: 'transparent', swipeEdgeWidth: 50}}
