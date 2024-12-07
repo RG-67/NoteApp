@@ -5,6 +5,7 @@ import CheckBox from "../components/CheckBox";
 import { useState } from "react";
 import { loginApi } from "../api/userApi";
 import { useNavigation } from "@react-navigation/native";
+import { setCredentials } from "../utility/Storage";
 
 
 function Login() {
@@ -35,7 +36,9 @@ function Login() {
             if (response?.status === true) {
                 setEmail("");
                 setPassword("");
-                Alert.alert("Success", response?.msg);
+                await setCredentials(response?.data._id, response?.data.userId);
+                navigation.navigate('Home');
+                // Alert.alert("Success", response?.msg);
             } else {
                 Alert.alert("Error", response?.msg || "Invalid user id or password");
             }
@@ -86,7 +89,7 @@ function Login() {
                     <Text style={styles.forgotPass}>Forgot Password ?</Text>
                 </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.loginBtn} /* onPress={handleUser} */ onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity style={styles.loginBtn} onPress={handleUser}>
                 <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
             <View style={styles.signUpContainer}>
