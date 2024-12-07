@@ -1,44 +1,29 @@
 import axios from "axios";
 import { TOKEN_KEY, BASE_URL } from '@env';
+import apiClient from "../utility/ApiClient";
 
 const url = BASE_URL;
 const authToken = TOKEN_KEY;
 
 export const getAllNotes = async (databaseUserId, userId) => {
-    // console.log("Loaded Token Key: ", TOKEN_KEY);
     try {
-        const response = await axios.post(`${url}/note/getAllNotes`, {
-            databaseUserId,
-            userId
-        },
-    {
-        headers: {
-            Authorization: `Bearer ${authToken}`,
-        },
-    }
-    );
-    return response.data;
+        const response = await apiClient.post('/note/getAllNotes', {databaseUserId, userId});
+        return response.data;
     } catch (error) {
-        console.log("Error fetching notes: ", error.message);
-        throw error;
+        console.error("getAllNoteErrRes ==>", error);
+        return error;
     }
 };
 
 export const createNote = async (title, note, databaseUserId, userId, reminderDateTime) => {
     try {
-        const response = await axios.post(`${url}/note/createNote`, {
-            title, note, databaseUserId, userId, reminderDateTime
-        },
-    {
-        headers: {
-            Authorization: `Bearer ${authToken}`,
-        },
-    }
-    );
-    return response.data;
+        console.log(`title: ${title}, note: ${note}, dbUsId: ${databaseUserId}, userId: ${userId}, rmDt: ${reminderDateTime}`);
+        const response = await apiClient.post('/note/createNote', {title, note, databaseUserId, userId, reminderDateTime});
+        console.log("createNoteRes ==>", response);
+        return response.data;
     } catch (error) {
-        console.log("Error creating note: ", error.message);
-        throw error;
+        console.error("createNoteErr ==>", error);
+        return response.error;
     }
 };
 

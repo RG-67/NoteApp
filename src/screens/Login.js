@@ -6,6 +6,7 @@ import { useState } from "react";
 import { loginApi } from "../api/userApi";
 import { useNavigation } from "@react-navigation/native";
 import { setCredentials } from "../utility/Storage";
+import { showToast } from "../utility/Constants";
 
 
 function Login() {
@@ -18,16 +19,12 @@ function Login() {
 
     const handleUser = () => {
         if(!email) {
-            showToast("Enter email id");
+            showToast("Enter email id")
         } else if(!password) {
             showToast("Enter password");
         } else {
             setLogin();
         }
-    }
-
-    const showToast = (message) => {
-        ToastAndroid.show(message, ToastAndroid.SHORT);
     }
 
     const setLogin = async () => {

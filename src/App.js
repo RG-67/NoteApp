@@ -9,6 +9,7 @@ import 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
 import {PropsWithChildren} from 'react';
 import {
+  ActivityIndicator,
   Alert,
   Button,
   FlatList,
@@ -35,6 +36,8 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import CustomDrawerContent from './components/CustomDrawerContent';
 import { enableScreens } from 'react-native-screens';
 import Bin from './screens/Bin';
+import { getCredentials } from './utility/Storage';
+import { loading } from './utility/LoadingBar';
 
 function App() {
 
@@ -42,6 +45,35 @@ function App() {
 
   const Stack = createNativeStackNavigator();
   const Drawer = createDrawerNavigator();
+
+  const [isLoading, setLoading] = useState(true);
+  const [isLogin, setLogin] = useState(false);
+
+  
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      const credentials = await getCredentials();
+      console.log(credentials);
+      setLogin(!!credentials);
+      setLoading(false);
+    };
+    checkLogin();
+  }, []);
+
+  if(isLoading) {
+    loading();
+  }
+
+  const AuthStack = () => {
+    return(
+      <Stack.Navigator initialRouteName='Login'>
+        <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
+        <Stack.Screen name='Registration' component={Registration} options={{headerShown: false}}/>
+        <Stack.Screen name='Home' component={DrawerNavigator} options={{headerShown: false}}/>
+      </Stack.Navigator>
+    );
+  }
   
   const DrawerNavigator = () => {
     return (
@@ -58,14 +90,24 @@ function App() {
     <GestureHandlerRootView>
     <NavigationContainer>
       <StatusBar backgroundColor={Colors.colorPrimaryVariant} barStyle="light-content"/>
-      <Stack.Navigator initialRouteName='Login'>
+      {/* <Stack.Navigator initialRouteName='Login'>
         <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
         <Stack.Screen name='Registration' component={Registration} options={{headerShown: false}}/>
         <Stack.Screen name='Home' component={DrawerNavigator} options={{headerShown: false}}/>
-      </Stack.Navigator>
+      </Stack.Navigator> */}
+      {isLogin ? <DrawerNavigator/> : <AuthStack/>}
     </NavigationContainer>
     </GestureHandlerRootView>
   )
 }
+
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1, 
+    justifyContent: 'center', 
+    alignItems: 'center'
+  }
+})
 
 export default App;

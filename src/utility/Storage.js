@@ -2,10 +2,10 @@ import EncryptedStorage from "react-native-encrypted-storage";
 
 
 
-export async function setCredentials(dbUserId, userId) {
+export async function setCredentials(databaseUserId, userId) {
     try {
-        await EncryptedStorage.setItem("user_credentials", JSON.stringify({dbUserId, userId}));
-        console.log("Creds ==>", `dbId: ${dbUserId}, usId: ${userId}`);
+        await EncryptedStorage.setItem("user_credentials", JSON.stringify({databaseUserId, userId}));
+        console.log("Creds ==>", `dbId: ${databaseUserId}, usId: ${userId}`);
         console.log("Credentials saved!");
     } catch (error) {
         console.log("Failed to saved credentials", error);

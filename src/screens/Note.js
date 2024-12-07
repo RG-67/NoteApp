@@ -1,9 +1,13 @@
-import { Button, Dimensions, FlatList, LayoutAnimation, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from "react-native";
+import { Alert, Button, Dimensions, FlatList, LayoutAnimation, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from "react-native";
 import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { noteItems } from "../utility/TestNoteData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { loading } from "../utility/LoadingBar";
+import { createNote, getAllNotes } from "../api/noteApi";
+import { getCredentials } from "../utility/Storage";
+import { showToast } from "../utility/Constants";
 
 
 const itemWidth = Dimensions.get('window').width;
@@ -11,6 +15,64 @@ const itemWidth = Dimensions.get('window').width;
 function Note ({navigation}) {
 
     const [isVisible, setVisible] = useState(true);
+    const [isLoading, setLoading] = useState(true);
+    const [isTitle, setTitle] = useState("");
+    const [isNote, setNote] = useState("");
+    const [notes, setNotes] = useState([]);
+
+    
+    const getNotes = async () => {
+        try{
+            const {databaseUserId, userId} = await getCredentials();
+            const response = await getAllNotes(databaseUserId, userId);
+            setLoading(false);
+            if (response?.status === true) {
+                setNotes(response?.data);
+            }
+            showToast(response?.msg);
+        } catch(error) {
+            setLoading(false);
+            console.error(error);
+        }
+    }
+
+    const setCreateNote = () => {
+        if(isTitle === "") {
+            showToast("Title should not empty");
+        } else if(isNote === "") {
+            showToast("Note field should not empty");
+        } else {
+            createUserNote();
+        }
+    }
+
+    const createUserNote = async () => {
+        try {
+            const {databaseUserId, userId} = await getCredentials();
+            const response = await createNote(isTitle, isNote, databaseUserId, userId, "");
+            if(response?.status === true) {
+                getNotes();
+            }
+            setEmptyField();
+            showToast(response?.msg);
+        } catch (error) {
+            console.error("Error to create note ==>", error);
+        }
+    }
+
+    const setEmptyField = () => {
+        toggleViews();
+        setTitle("");
+        setNote("");
+    }
+
+    useEffect(() => {
+        getNotes();
+    }, []);
+
+    if(isLoading) {
+        loading();
+    }
 
     if(Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -31,9 +93,12 @@ function Note ({navigation}) {
                 <Icon name="search" size={30} color={Colors.colorPrimaryVariant} style={{marginEnd: 10}}/>
                 </View>
                 <FlatList
-                data={noteItems}
-                keyExtractor={(item) => item.id}
+                data={notes}
+                keyExtractor={(item) => item._id}
                 numColumns={2}
+                initialNumToRender={10}
+                onEndReached={() => console.log("Fetch more data here")}
+                // ListFooterComponent={loading? loading() : null}
                 columnWrapperStyle={styles.wrapperStyle}
                 renderItem={({item}) => (
                 <View style={styles.mainItemContainer}>
@@ -57,25 +122,26 @@ function Note ({navigation}) {
                     placeholderTextColor={Colors.grey} 
                     keyboardType="default" 
                     multiline={false}
-                    underlineColorAndroid={Colors.black}/>
+                    underlineColorAndroid={Colors.black}
+                    onChangeText={setTitle}/>
                     <ScrollView style={styles.noteScroll}>
                     <TextInput style={styles.noteStyle} 
                     placeholder="Type here.." 
                     placeholderTextColor={Colors.grey} 
                     keyboardType="default" 
-                    multiline={true}/>
+                    multiline={true}
+                    onChangeText={setNote}/>
                     </ScrollView>
                     <View style={styles.noteButtonContainer}>
-                        <TouchableOpacity style={styles.cancelBtnStyle} onPress={toggleViews}>
+                        <TouchableOpacity style={styles.cancelBtnStyle} onPress={setEmptyField}>
                             <Icon name="cancel" size={30} color={Colors.transparent_green} style={styles.noteCreateBtnStyle}/>
                             <Text style={styles.noteCreateTextStyle}>Cancel</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.saveBtnStyle} onPress={toggleViews}>
+                        <TouchableOpacity style={styles.saveBtnStyle} /* onPress={toggleViews} */ onPress={setCreateNote}>
                             <Icon name="save" size={30} color={Colors.transparent_green} style={styles.noteCreateBtnStyle}/>
                             <Text style={styles.noteCreateTextStyle}>Save</Text>
                         </TouchableOpacity>
                     </View>
-                    {/* <Button title="Toggle" onPress={toggleViews}/> */}
                 </View>
             )}
             
@@ -190,7 +256,7 @@ const styles = StyleSheet.create({
     noteStyle: {
         fontWeight: 'normal',
         fontSize: 15,
-        color: Colors.white,
+        color: Colors.black,
         fontFamily: 'sans-serif',
         height: 'auto'
     },

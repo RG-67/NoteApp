@@ -19,8 +19,6 @@ export const loginApi = async (emailId, password) => {
         const response = await apiClient.post('/user/loginUser', {emailId, password});
         return response.data;
     } catch (error) {
-        // console.log("Error in loging request", error);
-        // throw error;
         return error;
     }
 };
