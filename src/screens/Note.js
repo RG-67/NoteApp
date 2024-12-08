@@ -9,6 +9,7 @@ import { createNote, getAllNotes } from "../api/noteApi";
 import { getCredentials } from "../utility/Storage";
 import { showToast } from "../utility/Constants";
 import { useFocusEffect } from "@react-navigation/native";
+import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 
 const itemWidth = Dimensions.get('window').width;
@@ -20,6 +21,9 @@ function Note ({navigation}) {
     const [isTitle, setTitle] = useState("");
     const [isNote, setNote] = useState("");
     const [notes, setNotes] = useState([]);
+    /* const [date, setDate] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false); */
 
     
     const getNotes = async () => {
@@ -92,6 +96,18 @@ function Note ({navigation}) {
         setVisible(!isVisible);
     }
 
+    /* const showPicker = (currentMode) => {
+        setShow(true);
+        setMode(currentMode);
+    };
+
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        console.log("DateTime ==>", date.toLocaleString());
+        setShow(Platform.OS === 'android');
+        setDate(currentDate);
+    } */
+
     return (
         <View style={styles.mainContainer}>
             <CustomHeader navigation={navigation}/>
@@ -126,6 +142,9 @@ function Note ({navigation}) {
                 </View>
             ) : (
                 <View style={styles.createMainNoteContainer}>
+                    <TouchableOpacity style={styles.reminderStyle} /* onPress={showPicker('date')} */>
+                    <Icon name="notification-add" size={30} color={Colors.colorPrimaryVariant}/>
+                    </TouchableOpacity>
                     <TextInput style={styles.titleStyle} 
                     placeholder="Title" 
                     placeholderTextColor={Colors.grey} 
@@ -151,6 +170,14 @@ function Note ({navigation}) {
                             <Text style={styles.noteCreateTextStyle}>Save</Text>
                         </TouchableOpacity>
                     </View>
+                    {/* {show && (
+                        <DateTimePickerAndroid
+                        value={date}
+                        mode={mode}
+                        display="default"
+                        onChange={onChange}
+                        />
+                    )} */}
                 </View>
             )}
             
@@ -258,7 +285,6 @@ const styles = StyleSheet.create({
         color: Colors.black,
         fontFamily: 'sans-serif',
         marginHorizontal: 10,
-        marginTop: 10,
         height: 50,
         paddingHorizontal: 10
     },
@@ -303,6 +329,19 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         textAlign: 'center',
         left: 30
+    },
+    reminderStyle: {
+        color: Colors.colorOnPrimary,
+        backgroundColor: Colors.transparent_green,
+        width: 80,
+        height: 30,
+        alignSelf: 'flex-end',
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: 10,
+        marginTop: 10,
+        marginEnd: 10
     }
 })
 
