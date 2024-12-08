@@ -3,11 +3,12 @@ import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { noteItems } from "../utility/TestNoteData";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { loading } from "../utility/LoadingBar";
 import { createNote, getAllNotes } from "../api/noteApi";
 import { getCredentials } from "../utility/Storage";
 import { showToast } from "../utility/Constants";
+import { useFocusEffect } from "@react-navigation/native";
 
 
 const itemWidth = Dimensions.get('window').width;
@@ -28,6 +29,8 @@ function Note ({navigation}) {
             setLoading(false);
             if (response?.status === true) {
                 setNotes(response?.data);
+            } else {
+                setNotes([]);
             }
             showToast(response?.msg);
         } catch(error) {
@@ -66,9 +69,15 @@ function Note ({navigation}) {
         setNote("");
     }
 
-    useEffect(() => {
+    useFocusEffect(
+        useCallback(() => {
+            getNotes();
+        }, [])
+    );
+
+    /* useEffect(() => {
         getNotes();
-    }, []);
+    }, []); */
 
     if(isLoading) {
         loading();

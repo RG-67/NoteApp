@@ -17,7 +17,6 @@ export const getAllNotes = async (databaseUserId, userId) => {
 
 export const createNote = async (title, note, databaseUserId, userId, reminderDateTime) => {
     try {
-        console.log(`title: ${title}, note: ${note}, dbUsId: ${databaseUserId}, userId: ${userId}, rmDt: ${reminderDateTime}`);
         const response = await apiClient.post('/note/createNote', {title, note, databaseUserId, userId, reminderDateTime});
         console.log("createNoteRes ==>", response);
         return response.data;
@@ -26,6 +25,27 @@ export const createNote = async (title, note, databaseUserId, userId, reminderDa
         return response.error;
     }
 };
+
+export const getReminderNotes = async (databaseUserId, userId) => {
+    try {
+        const response = await apiClient.post('/note/getReminderNote', {databaseUserId, userId});
+        return response.data;
+    } catch (error) {
+        const errorResponse = error.response?.data || {};
+        console.error("getReminderNoteErr ==>", errorResponse);
+        return errorResponse;
+    }
+}
+
+export const getBinNotes = async (databaseUserId, userId) => {
+    try {
+        const response = await apiClient.post('/note/getBinNote', {databaseUserId, userId});
+        return response.data;
+    } catch (error) {
+        const errorResponse = error.response?.data || {};
+        return errorResponse;
+    }
+}
 
 export const deleteNote = async (noteDatabaseId, noteId, databaseUserId, userId) => {
     try {

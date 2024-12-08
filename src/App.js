@@ -53,17 +53,22 @@ function App() {
 
   useEffect(() => {
     const checkLogin = async () => {
-      const credentials = await getCredentials();
-      console.log(credentials);
-      setLogin(!!credentials);
-      setLoading(false);
+      try {
+        const credentials = await getCredentials();
+        console.log(credentials);
+        setLogin(!!credentials);
+      } catch (error) {
+        console.error("Error checking loging status", error);
+      } finally {
+        setLoading(false);
+      }
     };
     checkLogin();
   }, []);
 
-  if(isLoading) {
+  /* if(isLoading) {
     loading();
-  }
+  } */
 
   const AuthStack = () => {
     return(
@@ -77,7 +82,8 @@ function App() {
   
   const DrawerNavigator = () => {
     return (
-      <Drawer.Navigator initialRouteName='Note' screenOptions={{headerShown: false, drawerType: 'front', overlayColor: 'transparent', swipeEdgeWidth: 50}}
+      <Drawer.Navigator initialRouteName='Note' screenOptions={{headerShown: false, drawerType: 'front', overlayColor: 'transparent', swipeEdgeWidth: 50,
+        lazy: true, detachInactiveScreens: false}}
       drawerContent={(props) => <CustomDrawerContent {...props}/>}>
       <Drawer.Screen name='Note' component={Note}/>
       <Drawer.Screen name='Reminder' component={Reminder}/>
@@ -86,28 +92,26 @@ function App() {
     )
   }
 
+  const Navigation = () => {
+    if(isLoading) {
+      return(
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.trans}}>
+          <ActivityIndicator size="large" color={Colors.colorPrimaryVariant} />
+        </View>
+      )
+    }
+    return isLogin ? <DrawerNavigator/> : <AuthStack/>
+  };
+
   return (
     <GestureHandlerRootView>
     <NavigationContainer>
       <StatusBar backgroundColor={Colors.colorPrimaryVariant} barStyle="light-content"/>
-      {/* <Stack.Navigator initialRouteName='Login'>
-        <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
-        <Stack.Screen name='Registration' component={Registration} options={{headerShown: false}}/>
-        <Stack.Screen name='Home' component={DrawerNavigator} options={{headerShown: false}}/>
-      </Stack.Navigator> */}
-      {isLogin ? <DrawerNavigator/> : <AuthStack/>}
+      {/* {isLogin ? <DrawerNavigator/> : <AuthStack/>} */}
+      <Navigation/>
     </NavigationContainer>
     </GestureHandlerRootView>
   )
 }
-
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1, 
-    justifyContent: 'center', 
-    alignItems: 'center'
-  }
-})
 
 export default App;
