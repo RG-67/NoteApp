@@ -73,8 +73,8 @@ function App() {
 
   const AuthStack = () => {
     return(
-      <Stack.Navigator initialRouteName='TestScreen'>
-        <Stack.Screen name='TestScreen' component={TestScreen} options={{headerShown: false}}/>
+      <Stack.Navigator initialRouteName='Login'>
+        {/* <Stack.Screen name='TestScreen' component={TestScreen} options={{headerShown: false}}/> */}
         <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
         <Stack.Screen name='Registration' component={Registration} options={{headerShown: false}}/>
         <Stack.Screen name='Home' component={DrawerNavigator} options={{headerShown: false}}/>
@@ -102,8 +102,8 @@ function App() {
         </View>
       )
     }
-    // return isLogin ? <DrawerNavigator/> : <AuthStack/>
-    return isLogin ? <AuthStack/>: <DrawerNavigator/>
+    return isLogin ? <DrawerNavigator/> : <AuthStack/>
+    // return isLogin ? <AuthStack/>: <DrawerNavigator/>
   };
 
   return (

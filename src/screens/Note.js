@@ -21,9 +21,8 @@ function Note ({navigation}) {
     const [isTitle, setTitle] = useState("");
     const [isNote, setNote] = useState("");
     const [notes, setNotes] = useState([]);
-    /* const [date, setDate] = useState(new Date());
-    const [mode, setMode] = useState('date');
-    const [show, setShow] = useState(false); */
+    const [date, setDate] = useState(new Date());
+    const [reminderDateTime, setReminderDateTime] = useState("");
 
     
     const getNotes = async () => {
@@ -96,17 +95,28 @@ function Note ({navigation}) {
         setVisible(!isVisible);
     }
 
-    /* const showPicker = (currentMode) => {
-        setShow(true);
-        setMode(currentMode);
+    const showPicker = (currentMode) => {
+        DateTimePickerAndroid.open({
+            value: date,
+            mode: currentMode,
+            is24Hour: true,
+            onChange: (event, selectedDate) => {
+                if(selectedDate) {
+                    if(currentMode === 'date') {
+                        console.log("Selected date ===>", selectedDate.toLocaleDateString());
+                        setDate(selectedDate);
+                        showPicker('time');
+                    }
+                    else if(currentMode === 'time') {
+                        const combineDateTime = new Date(selectedDate);
+                        console.log("Selected time ===>", selectedDate.toLocaleTimeString());
+                        const isoString = combineDateTime.toISOString();
+                        console.log("Formatted date and time ==>", isoString);
+                    }
+                }
+            }
+        });
     };
-
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        console.log("DateTime ==>", date.toLocaleString());
-        setShow(Platform.OS === 'android');
-        setDate(currentDate);
-    } */
 
     return (
         <View style={styles.mainContainer}>
@@ -142,7 +152,7 @@ function Note ({navigation}) {
                 </View>
             ) : (
                 <View style={styles.createMainNoteContainer}>
-                    <TouchableOpacity style={styles.reminderStyle} /* onPress={showPicker('date')} */>
+                    <TouchableOpacity style={styles.reminderStyle} onPress={() => showPicker('date')}>
                     <Icon name="notification-add" size={30} color={Colors.colorPrimaryVariant}/>
                     </TouchableOpacity>
                     <TextInput style={styles.titleStyle} 
@@ -170,14 +180,6 @@ function Note ({navigation}) {
                             <Text style={styles.noteCreateTextStyle}>Save</Text>
                         </TouchableOpacity>
                     </View>
-                    {/* {show && (
-                        <DateTimePickerAndroid
-                        value={date}
-                        mode={mode}
-                        display="default"
-                        onChange={onChange}
-                        />
-                    )} */}
                 </View>
             )}
             
