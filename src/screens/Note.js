@@ -12,6 +12,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 
 
+let ntDate = "", ntTime = "", reminderDateTime = "";
 const itemWidth = Dimensions.get('window').width;
 
 function Note ({navigation}) {
@@ -22,11 +23,6 @@ function Note ({navigation}) {
     const [isNote, setNote] = useState("");
     const [notes, setNotes] = useState([]);
     const [date, setDate] = useState(new Date());
-    const [reminderDateTime, setReminderDateTime] = useState("");
-    const [selectedNoteDate, setSelectedDate] = useState("");
-    const [selectedNoteTime, setSelectedTime] = useState("");
-
-    let ntDate = "", ntTime = "";
 
     
     const getNotes = async () => {
@@ -59,7 +55,7 @@ function Note ({navigation}) {
     const createUserNote = async () => {
         try {
             const {databaseUserId, userId} = await getCredentials();
-            const response = await createNote(isTitle, isNote, databaseUserId, userId, "");
+            const response = await createNote(isTitle, isNote, databaseUserId, userId, reminderDateTime);
             if(response?.status === true) {
                 getNotes();
             }
@@ -74,6 +70,9 @@ function Note ({navigation}) {
         toggleViews();
         setTitle("");
         setNote("");
+        ntDate = "";
+        ntTime = "";
+        reminderDateTime = "";
     }
 
     useFocusEffect(
@@ -109,17 +108,13 @@ function Note ({navigation}) {
                     if(currentMode === 'date') {
                         console.log("Selected date ===>", selectedValue.toLocaleDateString());
                         ntDate = selectedValue.toLocaleDateString();
-                        setSelectedDate(selectedValue.toLocaleDateString());
                         showPicker('time');
                     }
                     else if(currentMode === 'time') {
-                        setSelectedTime(selectedValue);
                         console.log("Selected time ===>", selectedValue.toLocaleTimeString());
-                        console.log("sdfsdvf", ntDate);
                         try {
-                            console.log("abcde ==>", `${formattedDate(ntDate)}`);
-                            const mrValue = mergedDateTime(formattedDate(ntDate), selectedValue.toLocaleTimeString());
-                            console.log("Formatted date and time ==>", mrValue);   
+                            reminderDateTime = mergedDateTime(formattedDate(ntDate), selectedValue.toLocaleTimeString());
+                            console.log("Formatted date and time ==>", reminderDateTime);
                         } catch (error) {
                             console.error(error);
                         }

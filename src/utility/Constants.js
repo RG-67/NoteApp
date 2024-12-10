@@ -12,7 +12,7 @@ export const mergedDateTime = (date, time) => {
     const mergedDate = new Date(date);
 
     mergedDate.setHours(adjustHourss, parseInt(minutes), parseInt(seconds), 0);
-    return mergedDate.toLocaleString();
+    return mergedDate.toISOString();
 }
 
 export const formattedDate = (inputDate) => {
@@ -21,6 +21,6 @@ export const formattedDate = (inputDate) => {
     const formattedYear = date.getFullYear();
     const formattedMonth = String(date.getMonth()+1).padStart(2, '0');
     const formattedDay = String(date.getDate()).padStart(2, '0');
-    console.log("lkwdfhlks -->", `${formattedYear}-${formattedMonth}-${formattedDay}`);
+    console.log("formatted Date -->", `${formattedYear}-${formattedMonth}-${formattedDay}`);
     return `${formattedYear}-${formattedMonth}-${formattedDay}`;
 }
