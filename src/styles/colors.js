@@ -11,7 +11,8 @@ const Colors = {
     grey: "#AAA8A8",
     deep_grey: "#817F7F",
     icon_tint: "#075B2C",
-    trans: "#ffffff00"
+    trans: "#ffffff00",
+    red: "#ff0000"
 }
 
 export default Colors;

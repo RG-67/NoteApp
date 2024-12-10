@@ -1,4 +1,4 @@
-import { Alert, Button, Dimensions, FlatList, LayoutAnimation, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from "react-native";
+import { Alert, Button, Dimensions, FlatList, LayoutAnimation, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, UIManager, View } from "react-native";
 import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,6 +10,7 @@ import { getCredentials } from "../utility/Storage";
 import { formattedDate, mergedDateTime, showToast } from "../utility/Constants";
 import { useFocusEffect } from "@react-navigation/native";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import { rgbaColor } from "react-native-reanimated/lib/typescript/Colors";
 
 
 let ntDate = "", ntTime = "", reminderDateTime = "";
@@ -23,6 +24,7 @@ function Note ({navigation}) {
     const [isNote, setNote] = useState("");
     const [notes, setNotes] = useState([]);
     const [date, setDate] = useState(new Date());
+    const [isModalVisible, setModalVisible] = useState(false);
 
     
     const getNotes = async () => {
@@ -142,6 +144,7 @@ function Note ({navigation}) {
                 // ListFooterComponent={loading? loading() : null}
                 columnWrapperStyle={styles.wrapperStyle}
                 renderItem={({item}) => (
+                <TouchableOpacity onPress={() => setModalVisible(true)}>
                 <View style={styles.mainItemContainer}>
                 <Text style={styles.dateAndTimeStyle}>{item.date}</Text>
                 <Text style={styles.dateAndTimeStyle}>{item.time}</Text>
@@ -150,11 +153,31 @@ function Note ({navigation}) {
                     <Text style={styles.noteTextStyle}>{item.note}</Text>
                 </View>
                 </View>
+                </TouchableOpacity>
             )}
                 style={styles.noteItemContainer}/>
                 <TouchableOpacity style={styles.floatBtnStyle} onPress={toggleViews}>
                     <Icon name="add" size={30} color={Colors.white}/>
                 </TouchableOpacity>
+                <Modal 
+                visible={isModalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setModalVisible(false)}>
+                    <View style={styles.modalContainer}>
+                    <View style={styles.insideModalStyle}>
+                    <Icon.Button name="edit-note" size={30} color={Colors.white} style={{backgroundColor: Colors.sallow_green}}
+                    onPress={() => setModalVisible(false)}>
+                        <Text style={{fontSize: 20, color: Colors.white, alignSelf: 'center', fontWeight: 'bold'}}>Edit</Text>
+                    </Icon.Button>
+                    
+                    <Icon.Button name="delete-forever" size={30} color={Colors.white} style={{backgroundColor: Colors.red}}
+                    onPress={() => setModalVisible(false)}>
+                        <Text style={{fontSize: 20, color: Colors.white, alignSelf: 'center', fontWeight: 'bold'}}>Delete</Text>
+                    </Icon.Button>
+                    </View>
+                    </View>
+                </Modal>
                 </View>
             ) : (
                 <View style={styles.createMainNoteContainer}>
@@ -350,6 +373,18 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginTop: 10,
         marginEnd: 10
+    },
+    modalContainer: {
+        justifyContent: "flex-end",
+        alignItems: 'center',
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    },
+    insideModalStyle: {
+        width: itemWidth,
+        backgroundColor: Colors.white,
+        padding: 10,
+        gap: 10
     }
 })
 
