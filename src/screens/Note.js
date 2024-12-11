@@ -2,10 +2,11 @@ import { Alert, Button, Dimensions, FlatList, LayoutAnimation, Modal, Platform, 
 import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { noteItems } from "../utility/TestNoteData";
 import { useCallback, useEffect, useState } from "react";
 import { loading } from "../utility/LoadingBar";
-import { createNote, getAllNotes } from "../api/noteApi";
+import { createNote, deleteNote, getAllNotes, updateNote } from "../api/noteApi";
 import { getCredentials } from "../utility/Storage";
 import { formattedDate, mergedDateTime, showToast } from "../utility/Constants";
 import { useFocusEffect } from "@react-navigation/native";
@@ -20,11 +21,12 @@ function Note ({navigation}) {
 
     const [isVisible, setVisible] = useState(true);
     const [isLoading, setLoading] = useState(true);
-    const [isTitle, setTitle] = useState("");
-    const [isNote, setNote] = useState("");
     const [notes, setNotes] = useState([]);
     const [date, setDate] = useState(new Date());
     const [isModalVisible, setModalVisible] = useState(false);
+    const [item, setItem] = useState("");
+    const [isTitle, setTitle] = useState(item?.title || "");
+    const [isNote, setNote] = useState(item?.note || "");
 
     
     const getNotes = async () => {
@@ -50,7 +52,11 @@ function Note ({navigation}) {
         } else if(isNote === "") {
             showToast("Note field should not empty");
         } else {
-            createUserNote();
+            if (item !== null) {
+                updateUserNote();
+            } else {
+                createUserNote();   
+            }
         }
     }
 
@@ -68,7 +74,36 @@ function Note ({navigation}) {
         }
     }
 
+    const updateUserNote = async () => {
+        try {
+            const {databaseUserId, userId} = await getCredentials();
+            const response = await updateNote(item._id, item.noteId, isTitle, isNote, databaseUserId, userId);
+            if(response?.status === true) {
+                getNotes();
+            }
+            setEmptyField();
+            showToast(response?.msg);
+        } catch (error) {
+            console.log("Error to update note ==>", error)
+        }
+    }
+
+    const deleteUserNote = async () => {
+        try {
+            const {databaseUserId, userId} = await getCredentials();
+            const response = await deleteNote(item._id, item.noteId, databaseUserId, userId);
+            if(response?.status === true) {
+                setItem("");
+                getNotes();
+            }
+            showToast(response?.msg);
+        } catch (error) {
+            console.log("Error to delete note ==>", error);
+        }
+    }
+
     const setEmptyField = () => {
+        setItem("");
         toggleViews();
         setTitle("");
         setNote("");
@@ -124,7 +159,45 @@ function Note ({navigation}) {
                 }
             }
         });
-    };
+    }
+
+    const handleItemClick = (noteItem, from) => {
+        if(from === "itemClick") {
+            setItem(noteItem);
+            setModalVisible(true);
+        } else if(from === "modalBtn") {
+            setModalVisible(false);
+            toggleViews();
+            setTitle(item.title);
+            setNote(item.note);
+        } else if(from === "cancelBtn") {
+            setModalVisible(false);
+            showAlertDialog();
+        } else {
+            setItem("");
+            setModalVisible(false);
+        }
+    }
+
+
+    const showAlertDialog = () => {
+        Alert.alert("Alert!", 
+            "Are you sure you want to delete the note?", 
+        [
+            {
+                text: "Cancel",
+                onPress: () => console.log("Cancel button pressed.."),
+                style: "cancel"
+            },
+            {
+                text: "Delete",
+                onPress: () => deleteUserNote(),
+                style: "destructive"
+            }
+        ], 
+        {cancelable: false}
+    );
+    }
 
     return (
         <View style={styles.mainContainer}>
@@ -144,7 +217,7 @@ function Note ({navigation}) {
                 // ListFooterComponent={loading? loading() : null}
                 columnWrapperStyle={styles.wrapperStyle}
                 renderItem={({item}) => (
-                <TouchableOpacity onPress={() => setModalVisible(true)}>
+                <TouchableOpacity onPress={() => handleItemClick(item, "itemClick")}>
                 <View style={styles.mainItemContainer}>
                 <Text style={styles.dateAndTimeStyle}>{item.date}</Text>
                 <Text style={styles.dateAndTimeStyle}>{item.time}</Text>
@@ -166,13 +239,14 @@ function Note ({navigation}) {
                 onRequestClose={() => setModalVisible(false)}>
                     <View style={styles.modalContainer}>
                     <View style={styles.insideModalStyle}>
+                    <MCIcon name="close-box-outline" size={30} color={Colors.red} style={{alignSelf: 'flex-end'}} onPress={() => handleItemClick("", "closeBtn")}/>
                     <Icon.Button name="edit-note" size={30} color={Colors.white} style={{backgroundColor: Colors.sallow_green}}
-                    onPress={() => setModalVisible(false)}>
+                    onPress={() => handleItemClick("", "modalBtn")}>
                         <Text style={{fontSize: 20, color: Colors.white, alignSelf: 'center', fontWeight: 'bold'}}>Edit</Text>
                     </Icon.Button>
                     
                     <Icon.Button name="delete-forever" size={30} color={Colors.white} style={{backgroundColor: Colors.red}}
-                    onPress={() => setModalVisible(false)}>
+                    onPress={() => handleItemClick("", "cancelBtn")}>
                         <Text style={{fontSize: 20, color: Colors.white, alignSelf: 'center', fontWeight: 'bold'}}>Delete</Text>
                     </Icon.Button>
                     </View>
@@ -190,6 +264,7 @@ function Note ({navigation}) {
                     keyboardType="default" 
                     multiline={false}
                     underlineColorAndroid={Colors.black}
+                    value={isTitle}
                     onChangeText={setTitle}/>
                     <ScrollView style={styles.noteScroll}>
                     <TextInput style={styles.noteStyle} 
@@ -197,6 +272,7 @@ function Note ({navigation}) {
                     placeholderTextColor={Colors.grey} 
                     keyboardType="default" 
                     multiline={true}
+                    value={isNote}
                     onChangeText={setNote}/>
                     </ScrollView>
                     <View style={styles.noteButtonContainer}>
@@ -317,7 +393,7 @@ const styles = StyleSheet.create({
         fontFamily: 'sans-serif',
         marginHorizontal: 10,
         height: 50,
-        paddingHorizontal: 10
+        paddingHorizontal: 5
     },
     noteStyle: {
         fontWeight: 'normal',

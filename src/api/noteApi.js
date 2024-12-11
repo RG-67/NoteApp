@@ -47,22 +47,24 @@ export const getBinNotes = async (databaseUserId, userId) => {
     }
 }
 
+export const updateNote = async (noteDatabaseId, noteId, title, note, databaseUserId, userId) => {
+    try {
+        const response = await apiClient.patch('/note/updateNote', {noteDatabaseId, noteId, title, note, databaseUserId, userId});
+        return response.data;
+    } catch (error) {
+        const errorResponse = error.response?.data || {};
+        return errorResponse;
+    }
+}
+
 export const deleteNote = async (noteDatabaseId, noteId, databaseUserId, userId) => {
     try {
-        const response = await axios.delete(`${url}/note/deleteNote`, {
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
-            data: {
-                noteDatabaseId,
-                noteId,
-                databaseUserId,
-                userId
-            }
+        const response = await apiClient.delete('/note/deleteNote', {
+            data: {noteDatabaseId, noteId, databaseUserId, userId}
         });
-    return response.data;
+        return response.data;
     } catch (error) {
-        console.log("Error deleting note: ", error.message);
-        throw error;
+        const errorResponse = error.response?.data || {};
+        return errorResponse;
     }
-};
+}
