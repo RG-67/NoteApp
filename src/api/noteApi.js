@@ -18,7 +18,6 @@ export const getAllNotes = async (databaseUserId, userId) => {
 export const createNote = async (title, note, databaseUserId, userId, reminderDateTime) => {
     try {
         const response = await apiClient.post('/note/createNote', {title, note, databaseUserId, userId, reminderDateTime});
-        console.log("createNoteRes ==>", response);
         return response.data;
     } catch (error) {
         console.error("createNoteErr ==>", error);
@@ -50,6 +49,26 @@ export const getBinNotes = async (databaseUserId, userId) => {
 export const updateNote = async (noteDatabaseId, noteId, title, note, databaseUserId, userId) => {
     try {
         const response = await apiClient.patch('/note/updateNote', {noteDatabaseId, noteId, title, note, databaseUserId, userId});
+        return response.data;
+    } catch (error) {
+        const errorResponse = error.response?.data || {};
+        return errorResponse;
+    }
+}
+
+export const setBinNote = async (noteDatabaseId, noteId, databaseUserId, userId) => {
+    try {
+        const response = await apiClient.patch('/note/setBinNote', {noteDatabaseId, noteId, databaseUserId, userId});
+        return response.data;
+    } catch (error) {
+        const errorResponse = error.response?.data || {};
+        return errorResponse;
+    }
+}
+
+export const restoreNote = async (noteDatabaseId, noteId, databaseUserId, userId) => {
+    try {
+        const response = await apiClient.patch('/note/restoreNote', {noteDatabaseId, noteId, databaseUserId, userId});
         return response.data;
     } catch (error) {
         const errorResponse = error.response?.data || {};

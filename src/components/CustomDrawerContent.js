@@ -1,8 +1,45 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Colors from "../styles/colors";
+import { CommonActions } from "@react-navigation/native";
+import { removeCredentials } from "../utility/Storage";
 
 const CustomDrawerContent = ({navigation, state}) => {
     const activeRouteName = state.routes[state.index].name;
+
+    
+    const showAlertDialog = () => {
+        Alert.alert("Alert!",
+            "Are you sure want to log out?",
+            [
+                {
+                    text: "Cancle",
+                    onPress: () => console.log("Cancel button pressed.."),
+                    style: "cancel"
+                },
+                {
+                    text: "Yes",
+                    onPress: handleLogOut,
+                    style: "destructive"
+                }
+            ],
+            {cancelable: false}
+        );
+    }
+
+    const handleLogOut = async () => {
+        const removeCred = await removeCredentials();
+        if (removeCred) {
+          navigation.closeDrawer();
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Auth' }], // Ensure 'Auth' matches the parent navigator
+            })
+          );
+        } else {
+          console.log("Credentials not removed..");
+        }
+      };
 
 
     return (
@@ -23,7 +60,7 @@ const CustomDrawerContent = ({navigation, state}) => {
                 <Image source={require('../assets/images/bin.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Bin</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.subHeaderContainer}>
+            <TouchableOpacity style={styles.subHeaderContainer} onPress={() => showAlertDialog()}>
                 <Image source={require('../assets/images/log_out.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Log Out</Text>
             </TouchableOpacity>

@@ -4,7 +4,7 @@ import { LoginRegisterGradient, LoginRegTextInputGradient } from "../styles/Grad
 import CheckBox from "../components/CheckBox";
 import { useState } from "react";
 import { loginApi } from "../api/userApi";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { setCredentials } from "../utility/Storage";
 import { showToast } from "../utility/Constants";
 
@@ -34,7 +34,12 @@ function Login() {
                 setEmail("");
                 setPassword("");
                 await setCredentials(response?.data._id, response?.data.userId);
-                navigation.navigate('Home');
+                navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0,
+                      routes: [{ name: 'Drawer' }],
+                    })
+                );
             } else {
                 Alert.alert("Error", response?.msg || "Invalid user id or password");
             }

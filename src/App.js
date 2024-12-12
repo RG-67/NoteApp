@@ -23,7 +23,6 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
-import { createNote, deleteNote, getAllNotes } from './api/noteApi'; 
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from './screens/Login';
@@ -67,17 +66,13 @@ function App() {
     checkLogin();
   }, []);
 
-  /* if(isLoading) {
-    loading();
-  } */
-
   const AuthStack = () => {
     return(
       <Stack.Navigator initialRouteName='Login'>
         {/* <Stack.Screen name='TestScreen' component={TestScreen} options={{headerShown: false}}/> */}
         <Stack.Screen name='Login' component={Login} options={{headerShown: false}}/>
         <Stack.Screen name='Registration' component={Registration} options={{headerShown: false}}/>
-        <Stack.Screen name='Home' component={DrawerNavigator} options={{headerShown: false}}/>
+        <Stack.Screen name='Drawer' component={DrawerNavigator} options={{headerShown: false}}/>
       </Stack.Navigator>
     );
   }
@@ -102,15 +97,22 @@ function App() {
         </View>
       )
     }
-    return isLogin ? <DrawerNavigator/> : <AuthStack/>
-    // return isLogin ? <AuthStack/>: <DrawerNavigator/>
+    return(
+      <Stack.Navigator screenOptions={{headerShown: false}}>
+        { isLogin ? (
+          <Stack.Screen name="Drawer" component={DrawerNavigator}/>
+        ) : (
+          <Stack.Screen name="Auth" component={AuthStack}/>
+        )}
+      </Stack.Navigator>
+      )
+    // isLogin ? <DrawerNavigator/> : <AuthStack/>
   };
 
   return (
     <GestureHandlerRootView>
     <NavigationContainer>
       <StatusBar backgroundColor={Colors.colorPrimaryVariant} barStyle="light-content"/>
-      {/* {isLogin ? <DrawerNavigator/> : <AuthStack/>} */}
       <Navigation/>
     </NavigationContainer>
     </GestureHandlerRootView>

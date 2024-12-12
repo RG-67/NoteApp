@@ -26,7 +26,9 @@ export async function removeCredentials() {
     try {
         await EncryptedStorage.clear();
         console.log("Credentials clear");
+        return true;
     } catch (error) {
         console.error("Failed to clear credentials", error);
+        return false;
     }
 }

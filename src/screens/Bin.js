@@ -1,11 +1,13 @@
-import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import { Alert, Dimensions, FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import CustomHeader from "../components/CustomHeader";
 import Colors from "../styles/colors";
 import { useCallback, useEffect, useState } from "react";
 import { getCredentials } from "../utility/Storage";
-import { getBinNotes } from "../api/noteApi";
+import { deleteNote, getBinNotes, restoreNote, setBinNote } from "../api/noteApi";
 import { showToast } from "../utility/Constants";
 import { useFocusEffect } from "@react-navigation/native";
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 
@@ -14,6 +16,8 @@ const itemWidth = Dimensions.get('window').width;
 const Bin = ({navigation}) => {
 
     const [notes, setNotes] = useState([]);
+    const [item, setItem] = useState("");
+    const [isModalVisible, setModalVisible] = useState(false);
 
     const getBnNotes = async () => {
         try {
@@ -30,6 +34,34 @@ const Bin = ({navigation}) => {
         }
     }
 
+    const restoreUserBinNote = async () => {
+        try {
+            const {databaseUserId, userId} = await getCredentials();
+            const response = await restoreNote(item._id, item.noteId, databaseUserId, userId);
+            if(response?.status === true) {
+                getBnNotes();
+            }
+            showToast(response?.msg);
+        } catch (error) {
+            console.error("Error to restore note ==>", error);
+        }
+    }
+
+    const deleteBinNote = async () => {
+        try {
+            const {databaseUserId, userId} = await getCredentials();
+            // console.log("w,dfhjkdhsw ==>", `${item._id}, ${item.noteId}, ${databaseUserId}, ${userId}}`);
+            const response = await deleteNote(item._id, item.noteId, databaseUserId, userId);
+            if(response?.status === true) {
+                setItem("");
+                getBnNotes();
+            }
+            showToast(response?.msg);
+        } catch (error) {
+            console.error("Error to delete note ==>", error);
+        }
+    }
+
     /* useEffect(() => {
         getBnNotes();
     }, []); */
@@ -40,6 +72,42 @@ const Bin = ({navigation}) => {
             getBnNotes();
         }, [])
     );
+
+
+    const handleItemClick = (item, from) => {
+        if(from === "itemClick") {
+            setItem(item);
+            setModalVisible(true);
+        } else if(from === "closeBtn") {
+            setItem("");
+            setModalVisible(false);
+        } else if(from === "modalBtn") {
+            setModalVisible(false);
+            restoreUserBinNote();
+        } else if(from === "cancelBtn") {
+            setModalVisible(false);
+            showAlertDialog();
+        }
+    }
+
+    const showAlertDialog = () => {
+        Alert.alert("Alert!",
+            "Are you sure want to permanently delete the note?",
+            [
+                {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel button pressed.."),
+                    style: "cancel"
+                },
+                {
+                    text: "Delete",
+                    onPress: () => deleteBinNote(),
+                    style: "destructive"
+                }
+            ],
+            {cancelable: false}
+        );
+    }
 
     return (
         <View style={styles.mainContainer}>
@@ -53,6 +121,7 @@ const Bin = ({navigation}) => {
                 // ListFooterComponent={loading? loading() : null}
                 columnWrapperStyle={styles.wrapperStyle}
                 renderItem={({item}) => (
+                <TouchableOpacity onPress={() => handleItemClick(item, "itemClick")}>
                 <View style={styles.mainItemContainer}>
                 <Text style={styles.dateAndTimeStyle}>{item.date}</Text>
                 <Text style={styles.dateAndTimeStyle}>{item.time}</Text>
@@ -61,8 +130,29 @@ const Bin = ({navigation}) => {
                     <Text style={styles.noteTextStyle}>{item.note}</Text>
                 </View>
                 </View>
+                </TouchableOpacity>
             )}
                 style={styles.noteItemContainer}/>
+                <Modal 
+                visible={isModalVisible}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setModalVisible(false)}>
+                    <View style={styles.modalContainer}>
+                    <View style={styles.insideModalStyle}>
+                    <MCIcon name="close-box-outline" size={30} color={Colors.red} style={styles.McIconStyle} onPress={() => handleItemClick("", "closeBtn")}/>
+                    <Icon.Button name="settings-backup-restore" size={30} color={Colors.white} style={styles.restoreModalIconStyle}
+                    onPress={() => handleItemClick("", "modalBtn")}>
+                        <Text style={styles.modalIconTextStyle}>Restore</Text>
+                    </Icon.Button>
+                    
+                    <Icon.Button name="delete-forever" size={30} color={Colors.white} style={styles.deleteModalIconStyle}
+                    onPress={() => handleItemClick("", "cancelBtn")}>
+                        <Text style={styles.modalIconTextStyle}>Delete</Text>
+                    </Icon.Button>
+                    </View>
+                    </View>
+                </Modal>
         </View>
     )
 }
@@ -122,7 +212,33 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginHorizontal: 5
     },
-
+    modalContainer: {
+        justifyContent: "flex-end",
+        alignItems: 'center',
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
+    },
+    insideModalStyle: {
+        width: itemWidth,
+        backgroundColor: Colors.white,
+        padding: 10,
+        gap: 10
+    },
+    McIconStyle: {
+        alignSelf: 'flex-end'
+    },
+    restoreModalIconStyle: {
+        backgroundColor: Colors.sallow_green
+    },
+    deleteModalIconStyle: {
+        backgroundColor: Colors.red
+    },
+    modalIconTextStyle: {
+        fontSize: 20, 
+        color: Colors.white, 
+        alignSelf: 'center', 
+        fontWeight: 'bold'
+    }
 });
 
 

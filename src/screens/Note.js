@@ -3,18 +3,16 @@ import Colors from "../styles/colors";
 import CustomHeader from "../components/CustomHeader";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { noteItems } from "../utility/TestNoteData";
 import { useCallback, useEffect, useState } from "react";
 import { loading } from "../utility/LoadingBar";
-import { createNote, deleteNote, getAllNotes, updateNote } from "../api/noteApi";
+import { createNote, getAllNotes, setBinNote, updateNote } from "../api/noteApi";
 import { getCredentials } from "../utility/Storage";
 import { formattedDate, mergedDateTime, showToast } from "../utility/Constants";
 import { useFocusEffect } from "@react-navigation/native";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
-import { rgbaColor } from "react-native-reanimated/lib/typescript/Colors";
 
 
-let ntDate = "", ntTime = "", reminderDateTime = "";
+let ntDate = "", reminderDateTime = "";
 const itemWidth = Dimensions.get('window').width;
 
 function Note ({navigation}) {
@@ -52,7 +50,7 @@ function Note ({navigation}) {
         } else if(isNote === "") {
             showToast("Note field should not empty");
         } else {
-            if (item !== null) {
+            if (item !== "") {
                 updateUserNote();
             } else {
                 createUserNote();   
@@ -88,17 +86,17 @@ function Note ({navigation}) {
         }
     }
 
-    const deleteUserNote = async () => {
+    const setUserBinNote = async () => {
         try {
             const {databaseUserId, userId} = await getCredentials();
-            const response = await deleteNote(item._id, item.noteId, databaseUserId, userId);
+            const response = await setBinNote(item._id, item.noteId, databaseUserId, userId);
             if(response?.status === true) {
                 setItem("");
                 getNotes();
             }
             showToast(response?.msg);
         } catch (error) {
-            console.log("Error to delete note ==>", error);
+            console.log("Error to set bin note ==>", error);
         }
     }
 
@@ -108,7 +106,6 @@ function Note ({navigation}) {
         setTitle("");
         setNote("");
         ntDate = "";
-        ntTime = "";
         reminderDateTime = "";
     }
 
@@ -182,7 +179,7 @@ function Note ({navigation}) {
 
     const showAlertDialog = () => {
         Alert.alert("Alert!", 
-            "Are you sure you want to delete the note?", 
+            "Are you sure want to delete the note?", 
         [
             {
                 text: "Cancel",
@@ -191,7 +188,7 @@ function Note ({navigation}) {
             },
             {
                 text: "Delete",
-                onPress: () => deleteUserNote(),
+                onPress: () => setUserBinNote(),
                 style: "destructive"
             }
         ], 
@@ -239,15 +236,15 @@ function Note ({navigation}) {
                 onRequestClose={() => setModalVisible(false)}>
                     <View style={styles.modalContainer}>
                     <View style={styles.insideModalStyle}>
-                    <MCIcon name="close-box-outline" size={30} color={Colors.red} style={{alignSelf: 'flex-end'}} onPress={() => handleItemClick("", "closeBtn")}/>
-                    <Icon.Button name="edit-note" size={30} color={Colors.white} style={{backgroundColor: Colors.sallow_green}}
+                    <MCIcon name="close-box-outline" size={30} color={Colors.red} style={styles.McIconStyle} onPress={() => handleItemClick("", "closeBtn")}/>
+                    <Icon.Button name="edit-note" size={30} color={Colors.white} style={styles.updateModalIconStyle}
                     onPress={() => handleItemClick("", "modalBtn")}>
-                        <Text style={{fontSize: 20, color: Colors.white, alignSelf: 'center', fontWeight: 'bold'}}>Edit</Text>
+                        <Text style={styles.modalIconTextStyle}>Edit</Text>
                     </Icon.Button>
                     
-                    <Icon.Button name="delete-forever" size={30} color={Colors.white} style={{backgroundColor: Colors.red}}
+                    <Icon.Button name="delete-forever" size={30} color={Colors.white} style={styles.deleteModalIconStyle}
                     onPress={() => handleItemClick("", "cancelBtn")}>
-                        <Text style={{fontSize: 20, color: Colors.white, alignSelf: 'center', fontWeight: 'bold'}}>Delete</Text>
+                        <Text style={styles.modalIconTextStyle}>Delete</Text>
                     </Icon.Button>
                     </View>
                     </View>
@@ -461,6 +458,21 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.white,
         padding: 10,
         gap: 10
+    },
+    McIconStyle: {
+        alignSelf: 'flex-end'
+    },
+    updateModalIconStyle: {
+        backgroundColor: Colors.sallow_green
+    },
+    deleteModalIconStyle: {
+        backgroundColor: Colors.red
+    },
+    modalIconTextStyle: {
+        fontSize: 20, 
+        color: Colors.white, 
+        alignSelf: 'center', 
+        fontWeight: 'bold'
     }
 })
 
