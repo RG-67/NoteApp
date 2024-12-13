@@ -3,7 +3,7 @@ import Colors from "../styles/colors";
 import { CommonActions } from "@react-navigation/native";
 import { removeCredentials } from "../utility/Storage";
 
-const CustomDrawerContent = ({navigation, state}) => {
+const CustomDrawerContent = ({onLogOut, state, ...props}) => {
     const activeRouteName = state.routes[state.index].name;
 
     
@@ -18,28 +18,13 @@ const CustomDrawerContent = ({navigation, state}) => {
                 },
                 {
                     text: "Yes",
-                    onPress: handleLogOut,
+                    onPress: () => onLogOut(),
                     style: "destructive"
                 }
             ],
             {cancelable: false}
         );
     }
-
-    const handleLogOut = async () => {
-        const removeCred = await removeCredentials();
-        if (removeCred) {
-          navigation.closeDrawer();
-          navigation.dispatch(
-            CommonActions.reset({
-              index: 0,
-              routes: [{ name: 'Auth' }], // Ensure 'Auth' matches the parent navigator
-            })
-          );
-        } else {
-          console.log("Credentials not removed..");
-        }
-      };
 
 
     return (
@@ -48,15 +33,15 @@ const CustomDrawerContent = ({navigation, state}) => {
             <Text style={styles.title}>Notes App</Text>
             <Text style={styles.userName}>Notes App</Text>
             <View style={styles.firstLineStyle}/>
-            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Note' && styles.activeDrawerStyle]} onPress={() => navigation.navigate('Note')}>
+            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Note' && styles.activeDrawerStyle]} onPress={() => props.navigation.navigate('Note')}>
                 <Image source={require('../assets/images/note.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Note</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Reminder' && styles.activeDrawerStyle]} onPress={() => navigation.navigate('Reminder')}>
+            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Reminder' && styles.activeDrawerStyle]} onPress={() => props.navigation.navigate('Reminder')}>
                 <Image source={require('../assets/images/reminder.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Reminder</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Bin' && styles.activeDrawerStyle]} onPress={() => navigation.navigate('Bin')}>
+            <TouchableOpacity style={[styles.subHeaderContainer, activeRouteName === 'Bin' && styles.activeDrawerStyle]} onPress={() => props.navigation.navigate('Bin')}>
                 <Image source={require('../assets/images/bin.png')} style={styles.iconStyle}/>
                 <Text style={styles.subHeaderTextStyle}>Bin</Text>
             </TouchableOpacity>

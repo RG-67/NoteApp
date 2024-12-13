@@ -9,7 +9,7 @@ import { setCredentials } from "../utility/Storage";
 import { showToast } from "../utility/Constants";
 
 
-function Login() {
+function Login({onLoginSuccess}) {
     const navigation = useNavigation();
 
     const [remember, setRemember] = useState(false);
@@ -34,12 +34,8 @@ function Login() {
                 setEmail("");
                 setPassword("");
                 await setCredentials(response?.data._id, response?.data.userId);
-                navigation.dispatch(
-                    CommonActions.reset({
-                      index: 0,
-                      routes: [{ name: 'Drawer' }],
-                    })
-                );
+                onLoginSuccess();
+                // navigation.replace('Note');
             } else {
                 Alert.alert("Error", response?.msg || "Invalid user id or password");
             }
